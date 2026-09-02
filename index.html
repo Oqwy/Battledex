@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Battleground</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>Battleground</h1>
+
+    <section id="view-form" class="view">
+      <form id="fight-form">
+        <label for="fighter-a">Fighter A</label>
+        <input type="text" id="fighter-a" name="fighterA" placeholder="e.g. a grizzly bear" required />
+
+        <label for="fighter-b">Fighter B</label>
+        <input type="text" id="fighter-b" name="fighterB" placeholder="e.g. 10 cows" required />
+
+        <button type="submit">Fight</button>
+      </form>
+    </section>
+
+    <section id="view-loading" class="view" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Fighting...</p>
+    </section>
+
+    <section id="view-result" class="view" hidden>
+      <h2 id="result-winner"></h2>
+      <div class="fighters">
+        <img id="result-image-a" src="" alt="Fighter A" />
+        <img id="result-image-b" src="" alt="Fighter B" />
+      </div>
+      <p id="result-reasoning"></p>
+      <button id="result-again">Fight again</button>
+    </section>
+
+    <section id="view-error" class="view" hidden>
+      <p id="error-message">Something went wrong.</p>
+      <button id="error-again">Try again</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
