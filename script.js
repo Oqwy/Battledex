@@ -24,17 +24,35 @@ function showError(message) {
   showView('error');
 }
 
-// Stage 1: fake fight, no network call yet. Stage 3 swaps this for a real fetch to /api/fight.
-function runFight(fighterA, fighterB) {
+// Stage 3: real verdict via /api/fight. Art generation not wired yet — image
+// slots stay placeholders until that lands.
+async function runFight(fighterA, fighterB) {
   showView('loading');
-  setTimeout(() => {
-    showResult({
-      winner: fighterA,
-      reasoning: `${fighterA} defeats ${fighterB} in a stunning upset (placeholder reasoning).`,
-      imageA: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterA),
-      imageB: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterB),
+  let res;
+  try {
+    res = await fetch('/api/fight', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fighterA, fighterB }),
     });
-  }, 1200);
+  } catch (err) {
+    showError('Network error — check your connection and try again.');
+    return;
+  }
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    showError(data.error || 'Something went wrong.');
+    return;
+  }
+
+  showResult({
+    winner: data.winner,
+    reasoning: data.reasoning,
+    imageA: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterA),
+    imageB: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterB),
+  });
 }
 
 document.getElementById('fight-form').addEventListener('submit', (e) => {
