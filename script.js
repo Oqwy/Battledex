@@ -24,8 +24,7 @@ function showError(message) {
   showView('error');
 }
 
-// Stage 3: real verdict via /api/fight. Art generation not wired yet — image
-// slots stay placeholders until that lands.
+// Stage 3: real verdict + art via /api/fight.
 async function runFight(fighterA, fighterB) {
   showView('loading');
   let res;
@@ -50,8 +49,8 @@ async function runFight(fighterA, fighterB) {
   showResult({
     winner: data.winner,
     reasoning: data.reasoning,
-    imageA: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterA),
-    imageB: 'https://placehold.co/200x200?text=' + encodeURIComponent(fighterB),
+    imageA: data.imageA,
+    imageB: data.imageB,
   });
 }
 

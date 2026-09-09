@@ -58,10 +58,12 @@
 - [ ] Verdict output (`winner`, `reasoning`) enforced via a zod schema, not JSON-format instructions in the prompt
 - [ ] Store both API keys in env vars, never in client code
 - [ ] Group inputs (e.g. "10 cows") still produce exactly one image for that side — handled in the prompt sent to the image API, not by looping
+- [ ] Every image generated must follow one shared art style template, appended to each fighter's image prompt (not left to the model's default style):
+  > 16-bit pixel art illustration, retro video game sprite style, bold outlined pixels, vibrant limited color palette, dynamic action pose. Depicted as one cohesive image, centered, filling most of the frame, isolated on a plain solid color background with no scenery. No text, words, letters, numbers, logos, watermarks, UI elements, borders, or frames.
 - [ ] Wire Fight button to call `/api/fight` instead of the fake timeout
-- [ ] Handle errors distinctly in the UI: verdict failure, image failure, rate-limit 429 — don't hang on loading forever
+- [ ] Handle errors distinctly in the UI: verdict failure, image failure, moderation-blocked (image request rejected by OpenAI's content moderation — distinct message from a generic image failure), rate-limit 429 — don't hang on loading forever
 
-**Done when:** typing two real fighters returns winner + reasoning + one image per side from a single call; hammering Fight 6x in a minute from one IP gets blocked on the 6th and resets after a minute.
+**Done when:** typing two real fighters returns winner + reasoning + one image per side from a single call, both images following the shared art style template; hammering Fight 6x in a minute from one IP gets blocked on the 6th and resets after a minute.
 
 ---
 

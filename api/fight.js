@@ -1,9 +1,12 @@
 const Anthropic = require('@anthropic-ai/sdk');
+const OpenAI = require('openai');
 const { z } = require('zod');
 const { zodOutputFormat } = require('@anthropic-ai/sdk/helpers/zod');
 const { JUDGE_SYSTEM_PROMPT } = require('./judge-prompt');
+const { ART_STYLE_TEMPLATE } = require('./art-style');
 
-const client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
+const anthropic = new Anthropic(); // reads ANTHROPIC_API_KEY from env
+const openai = new OpenAI(); // reads OPENAI_API_KEY from env
 
 const VerdictSchema = z.object({
   winner: z.string(),
@@ -25,6 +28,31 @@ function isRateLimited(ip) {
   return timestamps.length > RATE_LIMIT;
 }
 
+class ModerationBlockedError extends Error {}
+class ImageGenerationError extends Error {}
+
+// One image per fighter, whatever the input ("10 cows" still gets one image,
+// not ten) — that's on the model to honor from the prompt text itself.
+async function generateFighterImage(fighterText) {
+  try {
+    const result = await openai.images.generate({
+      model: 'gpt-image-1',
+      prompt: `A single character portrait representing: ${fighterText}. ${ART_STYLE_TEMPLATE}`,
+      size: '1024x1024',
+      n: 1,
+    });
+    const b64 = result.data?.[0]?.b64_json;
+    if (!b64) throw new ImageGenerationError('No image returned');
+    return `data:image/png;base64,${b64}`;
+  } catch (err) {
+    const code = err?.code || err?.error?.code;
+    if (code === 'moderation_blocked' || code === 'content_policy_violation') {
+      throw new ModerationBlockedError(fighterText);
+    }
+    throw new ImageGenerationError(err?.message || 'Image generation failed');
+  }
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -44,8 +72,9 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  let verdict;
   try {
-    const response = await client.messages.parse({
+    const response = await anthropic.messages.parse({
       model: 'claude-sonnet-5',
       max_tokens: 1024,
       output_config: { effort: 'low', format: zodOutputFormat(VerdictSchema) },
@@ -54,15 +83,32 @@ module.exports = async function handler(req, res) {
         { role: 'user', content: `Fighter A: ${fighterA}\nFighter B: ${fighterB}` },
       ],
     });
-
     if (!response.parsed_output) {
       res.status(502).json({ error: 'Judge failed to reach a verdict. Try again.' });
       return;
     }
-
-    res.status(200).json(response.parsed_output);
+    verdict = response.parsed_output;
   } catch (err) {
     console.error('Verdict call failed:', err);
     res.status(502).json({ error: 'Verdict service is unavailable. Try again.' });
+    return;
   }
+
+  let imageA, imageB;
+  try {
+    [imageA, imageB] = await Promise.all([
+      generateFighterImage(fighterA),
+      generateFighterImage(fighterB),
+    ]);
+  } catch (err) {
+    console.error('Image generation failed:', err);
+    if (err instanceof ModerationBlockedError) {
+      res.status(422).json({ error: `"${err.message}" was blocked by content moderation — try a different fighter.` });
+      return;
+    }
+    res.status(502).json({ error: 'Character art failed to generate. Try again.' });
+    return;
+  }
+
+  res.status(200).json({ ...verdict, imageA, imageB });
 };
