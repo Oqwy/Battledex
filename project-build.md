@@ -67,31 +67,21 @@
 
 ---
 
-## Stage 4 — Verdict UI polish
-
-**Goal:** match brief's spec: "winner card with animation, plus written reasoning."
-
-- [ ] Winner card component: name, image, reasoning text
-- [ ] Entry animation (CSS transition/keyframes) when result lands
-- [ ] Clean up loading state so it covers the full wait for the fight call
-
-**Done when:** full Fight flow feels finished, no more placeholder styling.
-
----
-
-## Stage 5 — BattleDex (save to localStorage)
+## Stage 4 — BattleDex (save to localStorage)
 
 **Goal:** save individual fighters, view saved fighters.
 
-- [ ] "Save" action per fighter: writes `{ label, image }` to a `localStorage` array — no fight/winner/reasoning data, just the fighter
-- [ ] BattleDex view: list/grid of saved fighters, click to view label + image
-- [ ] Delete/clear entries from BattleDex
+- [x] "Save" action per fighter: writes `{ label, image }` to a `localStorage` array — no fight/winner/reasoning data, just the fighter
+- [x] BattleDex view: grid of saved fighters, each a mini trading-card style (image on top, name below) — not clickable, card just displays label + image
+- [x] Delete/clear entries from BattleDex
+- [x] "Back to last fight" button on BattleDex view — jumps back to most recent result view (winner/reasoning/images still in memory)
+- [x] "New fight" button on BattleDex view — returns to input form view
 
-**Done when:** save a fighter, reload the page, it's still there in BattleDex.
+**Done when:** save a fighter, reload the page, it's still there in BattleDex; from BattleDex, can jump back to last fight result or start a new fight.
 
 ---
 
-## Stage 6 — Image compression before save
+## Stage 5 — Image compression before save
 
 **Goal:** stay under `localStorage` quota (per brief §5).
 
@@ -103,15 +93,29 @@
 
 ---
 
+## Stage 6 — Claude redesign
+
+**Goal:** hand entire app to Claude Design for full visual overhaul — not just verdict UI polish, every view.
+
+- [ ] Run all four views (form, loading, result, error) plus BattleDex through Claude Design for a complete visual pass
+- [ ] Winner card component: name, image, reasoning text, entry animation when result lands
+- [ ] Loading state redesigned to cover full wait for the fight call
+- [ ] Consistent visual language applied app-wide (typography, color, spacing, motion) — no leftover placeholder styling anywhere
+
+**Done when:** full app feels like one designed product, no more placeholder styling on any view.
+
+---
+
 ## Stage 7 — Final QA
 
-**Goal:** ship it, locally.
+**Goal:** ship it.
 
 - [ ] Full manual pass: empty inputs, one empty input, same fighter twice, very long names, non-English input
 - [ ] Confirm rate limiting doesn't fire on normal single-fight use
 - [ ] Confirm loading/error states cover: fight API failure (verdict or image side), rate limit hit, network offline
+- [ ] Deploy to Vercel
 
-**Done when:** local build handles the MVP end to end without console errors. No deploy step — stays local.
+**Done when:** app handles the MVP end to end without console errors, deployed to Vercel.
 
 ---
 

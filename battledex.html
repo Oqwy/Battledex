@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BattleDex — Battleground</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <h1>Battleground</h1>
+
+    <section id="view-battledex" class="view">
+      <h2>BattleDex</h2>
+      <div class="battledex-nav">
+        <button id="battledex-back-to-fight" type="button" hidden>Back to last fight</button>
+        <a id="battledex-new-fight" href="index.html">New fight</a>
+      </div>
+      <div id="battledex-grid" class="battledex-grid"></div>
+      <p id="battledex-empty" class="battledex-empty" hidden>No fighters saved yet.</p>
+      <button id="battledex-clear" type="button" hidden>Clear all</button>
+    </section>
+  </main>
+
+  <script src="battledex-storage.js"></script>
+  <script src="battledex.js"></script>
+</body>
+</html>

@@ -11,11 +11,19 @@ function showView(name) {
   }
 }
 
-function showResult({ winner, reasoning, imageA, imageB }) {
+function resetSaveButton(btn) {
+  btn.disabled = false;
+  btn.textContent = 'Save to BattleDex';
+}
+
+function showResult({ winner, reasoning, imageA, imageB, fighterA, fighterB }) {
+  saveLastFight({ winner, reasoning, imageA, imageB, fighterA, fighterB });
   document.getElementById('result-winner').textContent = `${winner} wins!`;
   document.getElementById('result-reasoning').textContent = reasoning;
   document.getElementById('result-image-a').src = imageA;
   document.getElementById('result-image-b').src = imageB;
+  resetSaveButton(document.getElementById('save-fighter-a'));
+  resetSaveButton(document.getElementById('save-fighter-b'));
   showView('result');
 }
 
@@ -51,6 +59,8 @@ async function runFight(fighterA, fighterB) {
     reasoning: data.reasoning,
     imageA: data.imageA,
     imageB: data.imageB,
+    fighterA,
+    fighterB,
   });
 }
 
@@ -63,3 +73,24 @@ document.getElementById('fight-form').addEventListener('submit', (e) => {
 
 document.getElementById('result-again').addEventListener('click', () => showView('form'));
 document.getElementById('error-again').addEventListener('click', () => showView('form'));
+
+document.getElementById('save-fighter-a').addEventListener('click', (e) => {
+  const lastFight = loadLastFight();
+  if (!lastFight) return;
+  saveFighter(lastFight.fighterA, lastFight.imageA);
+  e.target.disabled = true;
+  e.target.textContent = 'Saved!';
+});
+document.getElementById('save-fighter-b').addEventListener('click', (e) => {
+  const lastFight = loadLastFight();
+  if (!lastFight) return;
+  saveFighter(lastFight.fighterB, lastFight.imageB);
+  e.target.disabled = true;
+  e.target.textContent = 'Saved!';
+});
+
+// Arriving from battledex.html's "Back to last fight" link (?view=result).
+if (new URLSearchParams(location.search).get('view') === 'result') {
+  const lastFight = loadLastFight();
+  if (lastFight) showResult(lastFight);
+}

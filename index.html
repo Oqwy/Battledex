@@ -9,6 +9,7 @@
 <body>
   <main class="app">
     <h1>Battleground</h1>
+    <a id="nav-battledex" class="nav-link" href="battledex.html">📒 BattleDex</a>
 
     <section id="view-form" class="view">
       <form id="fight-form">
@@ -30,8 +31,14 @@
     <section id="view-result" class="view" hidden>
       <h2 id="result-winner"></h2>
       <div class="fighters">
-        <img id="result-image-a" src="" alt="Fighter A" />
-        <img id="result-image-b" src="" alt="Fighter B" />
+        <div class="fighter-slot">
+          <img id="result-image-a" src="" alt="Fighter A" />
+          <button id="save-fighter-a" class="save-btn" type="button">Save to BattleDex</button>
+        </div>
+        <div class="fighter-slot">
+          <img id="result-image-b" src="" alt="Fighter B" />
+          <button id="save-fighter-b" class="save-btn" type="button">Save to BattleDex</button>
+        </div>
       </div>
       <p id="result-reasoning"></p>
       <button id="result-again">Fight again</button>
@@ -43,6 +50,7 @@
     </section>
   </main>
 
+  <script src="battledex-storage.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
