@@ -5,9 +5,44 @@ const views = {
   error: document.getElementById('view-error'),
 };
 
+const LOADING_MESSAGES = [
+  'Sharpening claws...',
+  'Consulting the ancient scrolls...',
+  'Taping up the gloves...',
+  'Warming up the crowd...',
+  'Measuring the trash talk...',
+  'Rolling the dramatic entrance...',
+  'Checking the arena for weak floorboards...',
+  'Summoning the announcer...',
+  'Placing side bets...',
+  'Judge is putting on the ceremonial robe...',
+];
+
+let loadingInterval = null;
+
+function startLoadingMessages() {
+  const el = document.getElementById('loading-message');
+  let i = 0;
+  el.textContent = LOADING_MESSAGES[i];
+  loadingInterval = setInterval(() => {
+    i = (i + 1) % LOADING_MESSAGES.length;
+    el.textContent = LOADING_MESSAGES[i];
+  }, 1800);
+}
+
+function stopLoadingMessages() {
+  clearInterval(loadingInterval);
+  loadingInterval = null;
+}
+
 function showView(name) {
   for (const key in views) {
     views[key].hidden = key !== name;
+  }
+  if (name === 'loading') {
+    startLoadingMessages();
+  } else {
+    stopLoadingMessages();
   }
 }
 
@@ -43,14 +78,14 @@ async function runFight(fighterA, fighterB) {
       body: JSON.stringify({ fighterA, fighterB }),
     });
   } catch (err) {
-    showError('Network error — check your connection and try again.');
+    showError("Lost the signal to the arena — check your connection and try again.");
     return;
   }
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    showError(data.error || 'Something went wrong.');
+    showError(data.error || 'The ref threw a flag. Something went sideways — try again.');
     return;
   }
 

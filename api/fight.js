@@ -18,6 +18,7 @@ const VerdictSchema = z.object({
 // instance use; move to Vercel KV/Upstash if this needs to hold under real traffic.
 const RATE_LIMIT = 5;
 const WINDOW_MS = 60_000;
+const MAX_FIGHTER_LENGTH = 50;
 const hits = new Map(); // ip -> timestamps[]
 
 function isRateLimited(ip) {
@@ -62,13 +63,17 @@ module.exports = async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown';
 
   if (isRateLimited(ip)) {
-    res.status(429).json({ error: 'Too many fights — wait a minute and try again.' });
+    res.status(429).json({ error: "Whoa there, champ — the arena needs a breather. Give it a minute and step back up." });
     return;
   }
 
   const { fighterA, fighterB } = req.body || {};
   if (!fighterA || !fighterB) {
-    res.status(400).json({ error: 'Both fighters are required.' });
+    res.status(400).json({ error: "Can't have a fight with an empty corner — enter both fighters." });
+    return;
+  }
+  if (fighterA.length > MAX_FIGHTER_LENGTH || fighterB.length > MAX_FIGHTER_LENGTH) {
+    res.status(400).json({ error: `Easy, novelist — keep each fighter under ${MAX_FIGHTER_LENGTH} characters.` });
     return;
   }
 
@@ -84,13 +89,13 @@ module.exports = async function handler(req, res) {
       ],
     });
     if (!response.parsed_output) {
-      res.status(502).json({ error: 'Judge failed to reach a verdict. Try again.' });
+      res.status(502).json({ error: "The judge stared into the void and couldn't call it. Try again." });
       return;
     }
     verdict = response.parsed_output;
   } catch (err) {
     console.error('Verdict call failed:', err);
-    res.status(502).json({ error: 'Verdict service is unavailable. Try again.' });
+    res.status(502).json({ error: "The judge stepped out mid-fight. Give it another shot." });
     return;
   }
 
@@ -103,10 +108,10 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error('Image generation failed:', err);
     if (err instanceof ModerationBlockedError) {
-      res.status(422).json({ error: `"${err.message}" was blocked by content moderation — try a different fighter.` });
+      res.status(422).json({ error: `The arena censors benched "${err.message}" — too spicy for the ring. Try a different fighter.` });
       return;
     }
-    res.status(502).json({ error: 'Character art failed to generate. Try again.' });
+    res.status(502).json({ error: "The sketch artist's pencil snapped. Try again." });
     return;
   }
 
