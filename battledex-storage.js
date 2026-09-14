@@ -14,9 +14,30 @@ function saveBattledex(fighters) {
   localStorage.setItem(BATTLEDEX_KEY, JSON.stringify(fighters));
 }
 
-function saveFighter(label, image) {
+const SAVED_IMAGE_MAX_DIMENSION = 200;
+const SAVED_IMAGE_QUALITY = 0.7;
+
+// Resize + re-encode as JPEG via an off-screen canvas, to stay under localStorage quota.
+function compressImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, SAVED_IMAGE_MAX_DIMENSION / Math.max(img.width, img.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', SAVED_IMAGE_QUALITY));
+    };
+    img.onerror = () => reject(new Error('Failed to load image for compression'));
+    img.src = src;
+  });
+}
+
+async function saveFighter(label, image) {
+  const compressed = await compressImage(image);
   const fighters = loadBattledex();
-  fighters.push({ label, image });
+  fighters.push({ label, image: compressed });
   saveBattledex(fighters);
 }
 

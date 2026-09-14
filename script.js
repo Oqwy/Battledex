@@ -74,19 +74,27 @@ document.getElementById('fight-form').addEventListener('submit', (e) => {
 document.getElementById('result-again').addEventListener('click', () => showView('form'));
 document.getElementById('error-again').addEventListener('click', () => showView('form'));
 
+async function handleSave(button, label, image) {
+  button.disabled = true;
+  button.textContent = 'Saving...';
+  try {
+    await saveFighter(label, image);
+    button.textContent = 'Saved!';
+  } catch {
+    button.disabled = false;
+    button.textContent = 'Save failed — retry';
+  }
+}
+
 document.getElementById('save-fighter-a').addEventListener('click', (e) => {
   const lastFight = loadLastFight();
   if (!lastFight) return;
-  saveFighter(lastFight.fighterA, lastFight.imageA);
-  e.target.disabled = true;
-  e.target.textContent = 'Saved!';
+  handleSave(e.target, lastFight.fighterA, lastFight.imageA);
 });
 document.getElementById('save-fighter-b').addEventListener('click', (e) => {
   const lastFight = loadLastFight();
   if (!lastFight) return;
-  saveFighter(lastFight.fighterB, lastFight.imageB);
-  e.target.disabled = true;
-  e.target.textContent = 'Saved!';
+  handleSave(e.target, lastFight.fighterB, lastFight.imageB);
 });
 
 // Arriving from battledex.html's "Back to last fight" link (?view=result).
