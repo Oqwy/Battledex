@@ -4,51 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Battleground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <h1>Battleground</h1>
-    <a id="nav-battledex" class="nav-link" href="battledex.html">📒 BattleDex</a>
+  <div class="cabinet">
+    <div class="screen">
+      <header class="screen-header">
+        <div class="logo">BATTLEGROUND</div>
+        <a id="nav-battledex" class="pill-link" href="battledex.html">BATTLEDEX</a>
+      </header>
 
-    <section id="view-form" class="view">
-      <form id="fight-form">
-        <label for="fighter-a">Fighter A</label>
-        <input type="text" id="fighter-a" name="fighterA" placeholder="e.g. a grizzly bear" required />
+      <main class="screen-body">
+        <section id="view-form" class="view view-form">
+          <div class="title-block">
+            <h1 class="pixel-title">BATTLE<br />GROUND</h1>
+            <div class="tagline" id="form-tagline">SELECT YOUR FIGHTERS</div>
+          </div>
+          <form id="fight-form">
+            <div class="field">
+              <label for="fighter-a">&gt; FIGHTER A</label>
+              <input type="text" id="fighter-a" name="fighterA" placeholder="e.g. a grizzly bear" required />
+            </div>
+            <div class="vs-divider"><span></span><b>VS</b><span></span></div>
+            <div class="field">
+              <label for="fighter-b">&gt; FIGHTER B</label>
+              <input type="text" id="fighter-b" name="fighterB" placeholder="e.g. 10 cows" required />
+            </div>
+            <button type="submit" class="fight-btn">FIGHT!</button>
+            <div class="hint" id="form-hint">BOTH SLOTS REQUIRED</div>
+          </form>
+        </section>
 
-        <label for="fighter-b">Fighter B</label>
-        <input type="text" id="fighter-b" name="fighterB" placeholder="e.g. 10 cows" required />
+        <section id="view-loading" class="view view-loading" hidden>
+          <div class="vs-spinner" aria-hidden="true"><span>VS</span></div>
+          <p id="loading-message" class="loading-text">Fighting...</p>
+          <div class="verdict-pending">VERDICT PENDING</div>
+          <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+          <div class="loading-labels"><span>VERDICT</span><span>ART A</span><span>ART B</span></div>
+        </section>
 
-        <button type="submit">Fight</button>
-      </form>
-    </section>
+        <section id="view-result" class="view view-result" hidden>
+          <div class="ruling-tag">JUDGE HAS RULED</div>
+          <h2 id="result-winner" class="pixel-title"></h2>
+          <div class="fighters">
+            <div class="fighter-slot" id="slot-a">
+              <div class="fighter-tag"></div>
+              <img id="result-image-a" src="" alt="Fighter A" />
+              <div class="fighter-name" id="name-a"></div>
+              <button id="save-fighter-a" class="save-btn" type="button">SAVE TO DEX</button>
+            </div>
+            <div class="fighter-slot" id="slot-b">
+              <div class="fighter-tag"></div>
+              <img id="result-image-b" src="" alt="Fighter B" />
+              <div class="fighter-name" id="name-b"></div>
+              <button id="save-fighter-b" class="save-btn" type="button">SAVE TO DEX</button>
+            </div>
+          </div>
+          <div class="ruling-box">
+            <div class="ruling-label">THE RULING</div>
+            <p id="result-reasoning"></p>
+          </div>
+          <button id="result-again" class="fight-btn">FIGHT AGAIN</button>
+        </section>
 
-    <section id="view-loading" class="view" hidden>
-      <div class="spinner" aria-hidden="true"></div>
-      <p id="loading-message">Fighting...</p>
-    </section>
+        <section id="view-error" class="view view-error" hidden>
+          <div class="error-icon">!</div>
+          <div class="error-heading">THE REF THREW<br />A FLAG</div>
+          <p id="error-message">The ref threw a flag. Something went sideways.</p>
+          <div class="error-code">ERR — VERDICT NOT RETURNED</div>
+          <button id="error-again" class="fight-btn">BACK TO THE ARENA</button>
+        </section>
+      </main>
 
-    <section id="view-result" class="view" hidden>
-      <h2 id="result-winner"></h2>
-      <div class="fighters">
-        <div class="fighter-slot">
-          <img id="result-image-a" src="" alt="Fighter A" />
-          <button id="save-fighter-a" class="save-btn" type="button">Save to BattleDex</button>
-        </div>
-        <div class="fighter-slot">
-          <img id="result-image-b" src="" alt="Fighter B" />
-          <button id="save-fighter-b" class="save-btn" type="button">Save to BattleDex</button>
-        </div>
-      </div>
-      <p id="result-reasoning"></p>
-      <button id="result-again">Fight again</button>
-    </section>
-
-    <section id="view-error" class="view" hidden>
-      <p id="error-message">The ref threw a flag. Something went sideways.</p>
-      <button id="error-again">Back to the arena</button>
-    </section>
-  </main>
+      <footer class="screen-footer">CAB NO. 0417 — ARENA ONLINE</footer>
+      <div class="crt-overlay" aria-hidden="true"></div>
+    </div>
+  </div>
 
   <script src="battledex-storage.js"></script>
   <script src="script.js"></script>

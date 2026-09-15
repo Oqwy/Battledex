@@ -97,10 +97,10 @@
 
 **Goal:** hand entire app to Claude Design for full visual overhaul — not just verdict UI polish, every view.
 
-- [ ] Run all four views (form, loading, result, error) plus BattleDex through Claude Design for a complete visual pass
-- [ ] Winner card component: name, image, reasoning text, entry animation when result lands
-- [ ] Loading state redesigned to cover full wait for the fight call
-- [ ] Consistent visual language applied app-wide (typography, color, spacing, motion) — no leftover placeholder styling anywhere
+- [x] Run all four views (form, loading, result, error) plus BattleDex through Claude Design for a complete visual pass — imported "Battleground Arcade" design project via the Claude Design MCP
+- [x] Winner card component: name, image, reasoning text, entry animation when result lands (winner border pulse, WINNER/DEFEAT tags, grayscale loser)
+- [x] Loading state redesigned to cover full wait for the fight call (VS spinner, rotating status text, animated verdict/art progress bar)
+- [x] Consistent visual language applied app-wide (typography, color, spacing, motion) — no leftover placeholder styling anywhere
 
 **Done when:** full app feels like one designed product, no more placeholder styling on any view.
 

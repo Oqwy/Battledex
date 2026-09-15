@@ -48,15 +48,26 @@ function showView(name) {
 
 function resetSaveButton(btn) {
   btn.disabled = false;
-  btn.textContent = 'Save to BattleDex';
+  btn.textContent = 'SAVE TO DEX';
+}
+
+function setFighterOutcome(slotId, nameId, label, isWinner) {
+  const slot = document.getElementById(slotId);
+  slot.classList.toggle('is-winner', isWinner);
+  slot.classList.toggle('is-defeat', !isWinner);
+  slot.querySelector('.fighter-tag').textContent = isWinner ? 'WINNER' : 'DEFEAT';
+  document.getElementById(nameId).textContent = label;
 }
 
 function showResult({ winner, reasoning, imageA, imageB, fighterA, fighterB }) {
   saveLastFight({ winner, reasoning, imageA, imageB, fighterA, fighterB });
+  const aWins = winner === fighterA;
   document.getElementById('result-winner').textContent = `${winner} wins!`;
   document.getElementById('result-reasoning').textContent = reasoning;
   document.getElementById('result-image-a').src = imageA;
   document.getElementById('result-image-b').src = imageB;
+  setFighterOutcome('slot-a', 'name-a', fighterA, aWins);
+  setFighterOutcome('slot-b', 'name-b', fighterB, !aWins);
   resetSaveButton(document.getElementById('save-fighter-a'));
   resetSaveButton(document.getElementById('save-fighter-b'));
   showView('result');
@@ -106,18 +117,27 @@ document.getElementById('fight-form').addEventListener('submit', (e) => {
   runFight(fighterA, fighterB);
 });
 
+function updateFormReadiness() {
+  const ready = document.getElementById('fighter-a').value.trim() && document.getElementById('fighter-b').value.trim();
+  document.getElementById('view-form').classList.toggle('ready', ready);
+  document.getElementById('form-tagline').textContent = ready ? 'READY TO FIGHT' : 'SELECT YOUR FIGHTERS';
+  document.getElementById('form-hint').textContent = ready ? 'PRESS TO BEGIN' : 'BOTH SLOTS REQUIRED';
+}
+document.getElementById('fighter-a').addEventListener('input', updateFormReadiness);
+document.getElementById('fighter-b').addEventListener('input', updateFormReadiness);
+
 document.getElementById('result-again').addEventListener('click', () => showView('form'));
 document.getElementById('error-again').addEventListener('click', () => showView('form'));
 
 async function handleSave(button, label, image) {
   button.disabled = true;
-  button.textContent = 'Saving...';
+  button.textContent = 'SAVING...';
   try {
     await saveFighter(label, image);
-    button.textContent = 'Saved!';
+    button.textContent = 'SAVED!';
   } catch {
     button.disabled = false;
-    button.textContent = 'Save failed — retry';
+    button.textContent = 'SAVE FAILED — RETRY';
   }
 }
 

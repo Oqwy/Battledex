@@ -4,23 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BattleDex — Battleground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
-    <h1>Battleground</h1>
+  <div class="cabinet">
+    <div class="screen">
+      <header class="screen-header">
+        <div class="logo">BATTLEGROUND</div>
+        <span class="pill-link is-current">BATTLEDEX</span>
+      </header>
 
-    <section id="view-battledex" class="view">
-      <h2>BattleDex</h2>
-      <div class="battledex-nav">
-        <button id="battledex-back-to-fight" type="button" hidden>Back to last fight</button>
-        <a id="battledex-new-fight" href="index.html">New fight</a>
-      </div>
-      <div id="battledex-grid" class="battledex-grid"></div>
-      <p id="battledex-empty" class="battledex-empty" hidden>No fighters saved yet.</p>
-      <button id="battledex-clear" type="button" hidden>Clear all</button>
-    </section>
-  </main>
+      <main class="screen-body">
+        <section id="view-battledex" class="view view-battledex">
+          <div class="dex-head">
+            <h1 class="pixel-title">BATTLEDEX</h1>
+            <div class="roster-count"><span id="roster-count-text">0 ON ROSTER</span></div>
+          </div>
+          <div class="dex-actions">
+            <button id="battledex-back-to-fight" type="button" class="ghost-btn" hidden>LAST FIGHT</button>
+            <a id="battledex-new-fight" href="index.html" class="fight-btn small">NEW FIGHT</a>
+          </div>
+          <div id="battledex-grid" class="battledex-grid"></div>
+          <div id="battledex-empty" class="battledex-empty" hidden>
+            <div class="empty-grid"><span></span><span></span><span></span><span>?</span></div>
+            <div class="empty-heading">NO FIGHTERS<br />SAVED YET</div>
+            <p>Win a fight and save the art to start your roster.</p>
+          </div>
+          <button id="battledex-clear" type="button" class="clear-btn" hidden>CLEAR ALL</button>
+        </section>
+      </main>
+
+      <footer class="screen-footer">CAB NO. 0417 — ARENA ONLINE</footer>
+      <div class="crt-overlay" aria-hidden="true"></div>
+    </div>
+  </div>
 
   <script src="battledex-storage.js"></script>
   <script src="battledex.js"></script>
