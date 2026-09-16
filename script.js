@@ -114,6 +114,10 @@ document.getElementById('fight-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const fighterA = document.getElementById('fighter-a').value.trim();
   const fighterB = document.getElementById('fighter-b').value.trim();
+  if (!fighterA || !fighterB) {
+    showError("Can't have a fight with an empty corner — enter both fighters.");
+    return;
+  }
   runFight(fighterA, fighterB);
 });
 

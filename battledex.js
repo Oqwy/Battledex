@@ -51,8 +51,19 @@ document.getElementById('battledex-back-to-fight').addEventListener('click', () 
   location.href = 'index.html?view=result';
 });
 
+const confirmOverlay = document.getElementById('confirm-overlay');
+
 document.getElementById('battledex-clear').addEventListener('click', () => {
+  confirmOverlay.hidden = false;
+});
+
+document.getElementById('confirm-cancel').addEventListener('click', () => {
+  confirmOverlay.hidden = true;
+});
+
+document.getElementById('confirm-delete').addEventListener('click', () => {
   saveBattledex([]);
+  confirmOverlay.hidden = true;
   renderBattledex();
 });
 

@@ -56,6 +56,12 @@ a {
   height: 10px;
   flex: none;
   background: repeating-linear-gradient(135deg, var(--purple) 0 13px, var(--pink) 13px 26px);
+  background-position: 0 0;
+  animation: bg-hazard-scroll 0.9s linear infinite;
+}
+
+@keyframes bg-hazard-scroll {
+  to { background-position: 36.8px 0; }
 }
 
 .screen:has(.view-error:not([hidden]))::before {
@@ -188,13 +194,12 @@ a {
 }
 
 #fight-form {
-  margin-top: 42px;
+  margin: 42px auto 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-width: 420px;
+  max-width: 480px;
   width: 100%;
-  align-self: center;
 }
 
 .field label {
@@ -540,7 +545,9 @@ a {
 }
 
 .view-result > .fight-btn {
-  margin-top: 22px;
+  margin: 22px auto 0;
+  width: 100%;
+  max-width: 300px;
 }
 
 /* ---------- Error view ---------- */
@@ -621,6 +628,7 @@ a {
 
 .dex-actions {
   display: flex;
+  justify-content: center;
   gap: 11px;
   margin-top: 20px;
 }
@@ -751,7 +759,7 @@ a {
 }
 
 .clear-btn {
-  margin-top: auto;
+  margin-top: 32px;
   align-self: center;
   border: 2px solid rgba(255, 255, 255, 0.2);
   background: none;
@@ -765,6 +773,70 @@ a {
 .clear-btn:hover {
   border-color: var(--pink);
   color: var(--pink);
+}
+
+/* ---------- Confirm dialog ---------- */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 0, 12, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.confirm-overlay[hidden] {
+  display: none;
+}
+
+.confirm-box {
+  width: 100%;
+  max-width: 340px;
+  border: 2px solid var(--pink);
+  background: radial-gradient(125% 95% at 50% -10%, #24084f 0%, #0a0016 58%, #000 100%);
+  box-shadow: 0 0 60px rgba(245, 23, 103, 0.5), inset 0 0 34px rgba(76, 15, 251, 0.25);
+  padding: 26px 22px;
+  text-align: center;
+}
+
+.confirm-heading {
+  font: 400 15px / 1.6 var(--font-pixel);
+  color: var(--white);
+  text-shadow: 3px 0 0 var(--pink), -3px 0 0 var(--purple);
+}
+
+.confirm-box p {
+  margin: 14px 0 0;
+  font: 400 12.5px / 1.6 var(--font-body);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.confirm-actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 11px;
+}
+
+.confirm-actions button {
+  flex: 1;
+}
+
+.confirm-delete-btn {
+  border: 2px solid var(--white);
+  background: linear-gradient(180deg, var(--pink), var(--pink-dark));
+  color: var(--white);
+  font: 700 10px var(--font-mono);
+  letter-spacing: 0.12em;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(245, 23, 103, 0.6);
+}
+
+.confirm-delete-btn:hover {
+  background: linear-gradient(180deg, #ff2b78, #c81254);
 }
 
 /* ---------- Footer ---------- */
@@ -782,6 +854,17 @@ a {
 /* ---------- Desktop layout ---------- */
 
 @media (min-width: 720px) {
+  .cabinet {
+    padding: 0;
+  }
+
+  .screen {
+    max-width: none;
+    width: 100%;
+    min-height: 100vh;
+    border: none;
+  }
+
   .screen-header {
     padding: 16px 34px;
   }
@@ -791,7 +874,7 @@ a {
   }
 
   #fight-form {
-    max-width: 880px;
+    max-width: 1040px;
     display: grid;
     grid-template-columns: 1fr 110px 1fr;
     align-items: end;
@@ -807,7 +890,7 @@ a {
     display: none;
   }
 
-  .fight-btn {
+  #fight-form .fight-btn {
     grid-column: 1 / -1;
     max-width: 420px;
     margin: 0 auto;
