@@ -37,7 +37,7 @@ class ImageGenerationError extends Error {}
 async function generateFighterImage(fighterText) {
   try {
     const result = await openai.images.generate({
-      model: 'gpt-image-1',
+      model: 'gpt-image-2',
       prompt: `A single character portrait representing: ${fighterText}. ${ART_STYLE_TEMPLATE}`,
       size: '1024x1024',
       n: 1,
@@ -99,21 +99,30 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  let imageA, imageB;
-  try {
-    [imageA, imageB] = await Promise.all([
-      generateFighterImage(fighterA),
-      generateFighterImage(fighterB),
-    ]);
-  } catch (err) {
-    console.error('Image generation failed:', err);
-    if (err instanceof ModerationBlockedError) {
-      res.status(422).json({ error: `The arena censors benched "${err.message}" — too spicy for the ring. Try a different fighter.` });
-      return;
-    }
-    res.status(502).json({ error: "The sketch artist's pencil snapped. Try again." });
-    return;
-  }
+  // The verdict is already paid for, so an image failure on one (or both) sides
+  // doesn't sink the fight: that side gets image: null plus a reason code, and
+  // the client shows placeholder text in its art slot (brief §6).
+  const [artA, artB] = await Promise.allSettled([
+    generateFighterImage(fighterA),
+    generateFighterImage(fighterB),
+  ]);
 
-  res.status(200).json({ ...verdict, imageA, imageB });
+  res.status(200).json({
+    ...verdict,
+    imageA: imageOrNull(artA),
+    imageB: imageOrNull(artB),
+    imageErrorA: imageErrorCode(artA),
+    imageErrorB: imageErrorCode(artB),
+  });
 };
+
+function imageOrNull(settled) {
+  return settled.status === 'fulfilled' ? settled.value : null;
+}
+
+// null when the image succeeded; 'moderation' or 'failed' otherwise.
+function imageErrorCode(settled) {
+  if (settled.status === 'fulfilled') return null;
+  console.error('Image generation failed:', settled.reason);
+  return settled.reason instanceof ModerationBlockedError ? 'moderation' : 'failed';
+}

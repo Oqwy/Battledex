@@ -46,9 +46,26 @@ function showView(name) {
   }
 }
 
-function resetSaveButton(btn) {
-  btn.disabled = false;
-  btn.textContent = 'SAVE TO DEX';
+const ART_PLACEHOLDER_TEXT = {
+  moderation: 'ART BENCHED BY THE CENSORS',
+  failed: 'SKETCH ARTIST NO-SHOW',
+};
+
+function resetSaveButton(btn, hasImage) {
+  // BattleDex entries are { label, image } — nothing to save without art.
+  btn.disabled = !hasImage;
+  btn.textContent = hasImage ? 'SAVE TO DEX' : 'NO ART TO SAVE';
+}
+
+// Shows the fighter's image, or placeholder text in the same slot if the
+// image failed or was moderation-blocked.
+function setFighterArt(imgId, placeholderId, image, imageError) {
+  const img = document.getElementById(imgId);
+  const placeholder = document.getElementById(placeholderId);
+  img.hidden = !image;
+  img.src = image || '';
+  placeholder.hidden = Boolean(image);
+  placeholder.textContent = image ? '' : ART_PLACEHOLDER_TEXT[imageError] || ART_PLACEHOLDER_TEXT.failed;
 }
 
 function setFighterOutcome(slotId, nameId, label, isWinner) {
@@ -59,17 +76,17 @@ function setFighterOutcome(slotId, nameId, label, isWinner) {
   document.getElementById(nameId).textContent = label;
 }
 
-function showResult({ winner, reasoning, imageA, imageB, fighterA, fighterB }) {
-  saveLastFight({ winner, reasoning, imageA, imageB, fighterA, fighterB });
+function showResult({ winner, reasoning, imageA, imageB, imageErrorA, imageErrorB, fighterA, fighterB }) {
+  saveLastFight({ winner, reasoning, imageA, imageB, imageErrorA, imageErrorB, fighterA, fighterB });
   const aWins = winner === fighterA;
   document.getElementById('result-winner').textContent = `${winner} wins!`;
   document.getElementById('result-reasoning').textContent = reasoning;
-  document.getElementById('result-image-a').src = imageA;
-  document.getElementById('result-image-b').src = imageB;
+  setFighterArt('result-image-a', 'placeholder-a', imageA, imageErrorA);
+  setFighterArt('result-image-b', 'placeholder-b', imageB, imageErrorB);
   setFighterOutcome('slot-a', 'name-a', fighterA, aWins);
   setFighterOutcome('slot-b', 'name-b', fighterB, !aWins);
-  resetSaveButton(document.getElementById('save-fighter-a'));
-  resetSaveButton(document.getElementById('save-fighter-b'));
+  resetSaveButton(document.getElementById('save-fighter-a'), Boolean(imageA));
+  resetSaveButton(document.getElementById('save-fighter-b'), Boolean(imageB));
   showView('result');
 }
 
@@ -105,6 +122,8 @@ async function runFight(fighterA, fighterB) {
     reasoning: data.reasoning,
     imageA: data.imageA,
     imageB: data.imageB,
+    imageErrorA: data.imageErrorA,
+    imageErrorB: data.imageErrorB,
     fighterA,
     fighterB,
   });
@@ -147,12 +166,12 @@ async function handleSave(button, label, image) {
 
 document.getElementById('save-fighter-a').addEventListener('click', (e) => {
   const lastFight = loadLastFight();
-  if (!lastFight) return;
+  if (!lastFight?.imageA) return;
   handleSave(e.target, lastFight.fighterA, lastFight.imageA);
 });
 document.getElementById('save-fighter-b').addEventListener('click', (e) => {
   const lastFight = loadLastFight();
-  if (!lastFight) return;
+  if (!lastFight?.imageB) return;
   handleSave(e.target, lastFight.fighterB, lastFight.imageB);
 });
 

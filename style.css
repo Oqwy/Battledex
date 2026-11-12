@@ -478,6 +478,35 @@ a {
   opacity: 0.42;
 }
 
+/* Stands in for the image when art failed or was moderation-blocked. */
+.art-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+  background: #0a0a11;
+  border: 3px dashed rgba(155, 249, 255, 0.35);
+  color: var(--cyan);
+  font: 700 10px / 1.6 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.art-placeholder[hidden] {
+  display: none;
+}
+
+.fighter-slot.is-winner .art-placeholder {
+  border: 4px solid var(--white);
+}
+
+.fighter-slot.is-defeat .art-placeholder {
+  opacity: 0.6;
+}
+
 .fighter-name {
   font: 700 10px / 1.45 var(--font-mono);
   letter-spacing: 0.06em;
