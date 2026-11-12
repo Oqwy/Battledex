@@ -4,3 +4,4 @@ node_modules
 .env.local
 .impeccable/
 .DS_Store
+.env*
