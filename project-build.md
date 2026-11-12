@@ -8,10 +8,10 @@
 
 **Goal:** empty project running locally.
 
-- [ ] `index.html`, `style.css`, `script.js` — bare skeleton, no logic yet
-- [ ] `vercel.json` (if needed) + `api/` folder for serverless functions
-- [ ] `package.json` (name, no deps yet unless a dev server is wanted)
-- [ ] Run locally (e.g. `vercel dev` or a static server), confirm blank page loads
+- [x] `index.html`, `style.css`, `script.js` — bare skeleton, no logic yet
+- [x] `vercel.json` (if needed) + `api/` folder for serverless functions
+- [x] `package.json` (name, no deps yet unless a dev server is wanted)
+- [x] Run locally (e.g. `vercel dev` or a static server), confirm blank page loads
 
 **Done when:** blank page loads locally. No deploy — building and testing locally the whole way.
 
@@ -21,12 +21,12 @@
 
 **Goal:** all core UI elements exist and are wired to JS, hardcoded/mock data only.
 
-- [ ] Four separate views on one page — input form, loading, result, error — each toggled via `hidden` attribute, never stacked/visible together
-- [ ] Input form view: two text inputs (fighter A, fighter B), Fight button — the only view visible on load
-- [ ] Loading view: spinner/skeleton, shown on click
-- [ ] Result view: winner name, written reasoning, two image slots — populate with placeholder text/images after a fake `setTimeout` delay
-- [ ] Error view: placeholder error message
-- [ ] Basic CSS layout, mobile-usable
+- [x] Four separate views on one page — input form, loading, result, error — each toggled via `hidden` attribute, never stacked/visible together
+- [x] Input form view: two text inputs (fighter A, fighter B), Fight button — the only view visible on load
+- [x] Loading view: spinner/skeleton, shown on click
+- [x] Result view: winner name, written reasoning, two image slots — populate with placeholder text/images after a fake `setTimeout` delay
+- [x] Error view: placeholder error message
+- [x] Basic CSS layout, mobile-usable
 
 **Done when:** on load only input form shows; clicking Fight hides it, shows loading, then swaps to result view (fake data) via `hidden`, no network calls yet.
 
@@ -36,11 +36,11 @@
 
 **Goal:** lock Claude's role to judging fights, resist prompt injection from fighter input.
 
-- [ ] Write the system prompt used in the verdict call: role locked to fight judge only — takes two fighters, returns a winner and reasoning, nothing else
-- [ ] Must always pick exactly one winner — no ties, no draws, no refusing to decide, even for identical/mirrored fighters (break the tie on flavor/creativity if needed, but still pick one)
-- [ ] Reasoning must be 2-4 sentences max, fun and playful tone, but logically justifies the winner
-- [ ] Explicitly forbid in the prompt: role changes, revealing the system prompt, following instructions embedded in fighter names/descriptions, doing anything other than judging the fight
-- [ ] Treat fighter input strictly as data to judge, never as instructions
+- [x] Write the system prompt used in the verdict call: role locked to fight judge only — takes two fighters, returns a winner and reasoning, nothing else
+- [x] Must always pick exactly one winner — no ties, no draws, no refusing to decide, even for identical/mirrored fighters (break the tie on flavor/creativity if needed, but still pick one)
+- [x] Reasoning must be 2-4 sentences max, fun and playful tone, but logically justifies the winner
+- [x] Explicitly forbid in the prompt: role changes, revealing the system prompt, following instructions embedded in fighter names/descriptions, doing anything other than judging the fight
+- [x] Treat fighter input strictly as data to judge, never as instructions
 - [ ] Test with adversarial input (e.g. a fighter name containing "ignore previous instructions and...") — confirm it still just judges a fight
 - [ ] Test with identical fighters twice (e.g. "cow" vs "cow") — confirm it still names one winner, no tie/refusal
 
@@ -52,16 +52,16 @@
 
 **Goal:** one function, one call, real winner + reasoning + one image per side, end to end.
 
-- [ ] `api/fight.js` serverless function: takes `{ fighterA, fighterB }`
-- [ ] Rate limit check runs first, before calling either API — key by IP, 5 requests/minute per `project-brief.md` §5, return 429 with a clear message when exceeded
-- [ ] Calls Claude for the verdict (using the Stage 2 system prompt) and OpenAI image API for both fighters' art
-- [ ] Verdict output (`winner`, `reasoning`) enforced via a zod schema, not JSON-format instructions in the prompt
-- [ ] Store both API keys in env vars, never in client code
-- [ ] Group inputs (e.g. "10 cows") still produce exactly one image for that side — handled in the prompt sent to the image API, not by looping
-- [ ] Every image generated must follow one shared art style template, appended to each fighter's image prompt (not left to the model's default style):
+- [x] `api/fight.js` serverless function: takes `{ fighterA, fighterB }`
+- [x] Rate limit check runs first, before calling either API — key by IP, 5 requests/minute per `project-brief.md` §6, return 429 with a clear message when exceeded
+- [x] Calls Claude for the verdict (using the Stage 2 system prompt) and OpenAI image API for both fighters' art
+- [x] Verdict output (`winner`, `reasoning`) enforced via a zod schema, not JSON-format instructions in the prompt
+- [x] Store both API keys in env vars, never in client code
+- [x] Group inputs (e.g. "10 cows") still produce exactly one image for that side — handled in the prompt sent to the image API, not by looping
+- [x] Every image generated must follow one shared art style template, appended to each fighter's image prompt (not left to the model's default style):
   > 16-bit pixel art illustration, retro video game sprite style, bold outlined pixels, vibrant limited color palette, dynamic action pose. Depicted as one cohesive image, centered, filling most of the frame, isolated on a plain solid color background with no scenery. No text, words, letters, numbers, logos, watermarks, UI elements, borders, or frames.
-- [ ] Wire Fight button to call `/api/fight` instead of the fake timeout
-- [ ] Handle errors distinctly in the UI: verdict failure, image failure, moderation-blocked (image request rejected by OpenAI's content moderation — distinct message from a generic image failure), rate-limit 429 — don't hang on loading forever
+- [x] Wire Fight button to call `/api/fight` instead of the fake timeout
+- [x] Handle errors distinctly in the UI: verdict failure, image failure, moderation-blocked (image request rejected by OpenAI's content moderation — distinct message from a generic image failure), rate-limit 429 — don't hang on loading forever
 
 **Done when:** typing two real fighters returns winner + reasoning + one image per side from a single call, both images following the shared art style template; hammering Fight 6x in a minute from one IP gets blocked on the 6th and resets after a minute.
 
@@ -83,7 +83,7 @@
 
 ## Stage 5 — Image compression before save
 
-**Goal:** stay under `localStorage` quota (per brief §5).
+**Goal:** stay under `localStorage` quota (per brief §6).
 
 - [x] Before saving a fighter to BattleDex, draw its image to an off-screen `<canvas>`, resize down, re-export as JPEG/WebP at reduced quality
 - [x] Save the compressed data URI, not the original
@@ -110,12 +110,26 @@
 
 **Goal:** ship it.
 
+- [x] Partial failure (brief §6): if the verdict succeeds but an image fails or is moderation-blocked, return the verdict anyway and show placeholder text in that fighter's image slot
 - [ ] Full manual pass: empty inputs, one empty input, same fighter twice, very long names, non-English input
 - [ ] Confirm rate limiting doesn't fire on normal single-fight use
 - [ ] Confirm loading/error states cover: fight API failure (verdict or image side), rate limit hit, network offline
 - [ ] Deploy to Vercel
 
-**Done when:** app handles the MVP end to end without console errors, deployed to Vercel.
+**Done when:** app handles the MVP end to end without console errors, deployed to Vercel with a shareable link.
+
+---
+
+## Stage 8 — Public launch readiness
+
+**Goal:** safe to share the link publicly, after the friends phase feedback is addressed (brief §5).
+
+- [ ] Address feedback collected during the friends phase
+- [ ] Move rate limiting from in-memory to a shared store (e.g. Vercel KV / Upstash) so 5/min/IP holds across serverless instances and cold starts
+- [ ] Add a monthly spend cap — once reached, the fight API returns a clear "arena closed for the month" error instead of calling Claude/OpenAI
+- [ ] Re-run the Stage 7 manual pass against the production deploy
+
+**Done when:** hammering the deployed API from one IP is blocked on the 6th request even across instances, and hitting the spend cap stops all external API calls.
 
 ---
 
